@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Astral Computers — Сборка ПК | Продажа и выкуп комплектующих</title>
+
+<!-- Tailwind CSS (CDN, standalone build) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bgPrimary: "#0B0E14",
+          panel: "#161B26",
+          accent1: "#00E5FF",
+          accent2: "#3D5AFE",
+          textMuted: "#94A3B8"
+        }
+      }
+    }
+  };
+</script>
+
+<!-- React + ReactDOM (CDN, production builds) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Babel Standalone (для in-browser трансформации JSX), версия зафиксирована во избежание проблем с ESM-чанками при открытии файла напрямую -->
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js" crossorigin></script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #0B0E14; margin: 0; }
+</style>
+</head>
+<body class="bg-[#0B0E14]">
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useRef } = React;
+
+const TELEGRAM_CHANNEL = "https://t.me";
+const TELEGRAM_BOT = "https://t.me";
+
+const products = [
+  {
+    id: 1,
+    title: "Игровая Сборка Astral Ultimate (RTX 5070)",
+    badge: "🔥 ТОП ИГР",
+    price: "Цена по запросу",
+    imageUrl: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800&q=80",
+    specs: [
+      { label: "Процессор", value: "AMD Ryzen 7 7800X3D" },
+      { label: "Видеокарта", value: "NVIDIA GeForce RTX 5070 12GB" },
+      { label: "Память", value: "32GB DDR5 High-Speed" },
+      { label: "Накопитель", value: "1TB NVMe M.2 SSD" }
+    ],
+    ctaLink: "https://t.me?text=Здравствуйте!_Меня_интересует_сборка_на_RTX_5070"
+  },
+  {
+    id: 2,
+    title: "Astral SFF Mini-Cube (Кастомный ITX)",
+    badge: "Compact Elite",
+    price: "Индивидуальный просчет",
+    imageUrl: "https://images.unsplash.com/photo-1587202372616-b43abea06c2a?w=800&q=80",
+    specs: [
+      { label: "Форм-фактор", value: "Ультра-компактный SFF / ITX" },
+      { label: "Охлаждение", value: "Премиальное жидкостное СЖО" },
+      { label: "Особенность", value: "Максимальная мощность в минимальном объеме" },
+      { label: "Кабель-менеджмент", value: "Индивидуальный кастомный кастом" }
+    ],
+    ctaLink: "https://t.me?text=Здравствуйте!_Хочу_компактную_SFF_сборку"
+  },
+  {
+    id: 3,
+    title: "Моментальный Выкуп & Trade-In железа",
+    badge: "Быстрая Сделка",
+    price: "Оценка за 10 минут",
+    imageUrl: "https://images.unsplash.com/photo-1591405351990-4726e331f141?w=800&q=80",
+    specs: [
+      { label: "Услуга", value: "Выкуп вашего старого ПК или видеокарты" },
+      { label: "Обмен", value: "Trade-In старого железа на новое флагманское" },
+      { label: "Проверка", value: "Онлайн через автоматического бота" },
+      { label: "Выплата", value: "Деньги сразу в день обращения" }
+    ],
+    ctaLink: "https://t.me"
+  }
+];
+
+const whyChooseUs = [
+  {
+    icon: "🧵",
+    title: "Профессиональный кабель-менеджмент",
+    desc: "Идеальный порядок внутри корпуса."
+  },
+  {
+    icon: "⚙️",
+    title: "Стресс-тесты 24/7",
+    desc: "Полная проверка стабильности перед отдачей клиенту."
+  },
+  {
+    icon: "📦",
+    title: "Актуальный склад в боте",
+    desc: "Бот @AstralAiBOT всегда знает, что есть в наличии."
+  }
+];
+
+function AstralLogo({ className = "w-12 h-12" }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={`${className} fill-none stroke-[#00E5FF] stroke-2`}
+    >
+      <path d="M50 15 C30 15 20 35 20 60 C20 80 35 90 50 90 C65 90 80 80 80 60 C80 35 70 15 50 15 Z" />
+      <path d="M35 50 L45 65 L40 70 Z" fill="#00E5FF" />
+      <path d="M65 50 L55 65 L60 70 Z" fill="#00E5FF" />
+      <path d="M50 30 L50 45" />
+    </svg>
+  );
+}
+
+function Header({ catalogRef }) {
+  const scrollToCatalog = () => {
+    catalogRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-[#0B0E14]/70 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <AstralLogo className="w-10 h-10" />
+          <span className="text-white font-bold tracking-widest text-lg">
+            ASTRAL COMPUTERS
+          </span>
+        </div>
+
+        <nav className="hidden md:flex items-center gap-8 text-textMuted font-medium">
+          <button
+            onClick={scrollToCatalog}
+            className="hover:text-[#00E5FF] transition-colors duration-300"
+          >
+            Каталог
+          </button>
+          <a
+            href="#trade-in"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById("trade-in")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="hover:text-[#00E5FF] transition-colors duration-300"
+          >
+            Trade-In
+          </a>
+          <a
+            href={TELEGRAM_BOT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#00E5FF] transition-colors duration-300"
+          >
+            Наш Бот
+          </a>
+        </nav>
+
+        <a
+          href={TELEGRAM_CHANNEL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative inline-flex items-center px-5 py-2.5 rounded-2xl font-semibold text-[#0B0E14] bg-[#00E5FF] shadow-[0_0_20px_rgba(0,229,255,0.6)] hover:shadow-[0_0_35px_rgba(0,229,255,0.9)] hover:scale-105 transition-all duration-300"
+        >
+          Telegram Канал
+        </a>
+      </div>
+    </header>
+  );
+}
+
+function Hero({ catalogRef }) {
+  const scrollToCatalog = () => {
+    catalogRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <section className="relative pt-40 pb-24 px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center overflow-hidden">
+      <div
+        className="pointer-events-none absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full blur-3xl opacity-20"
+        style={{ background: "#3D5AFE" }}
+      />
+      <div
+        className="pointer-events-none absolute top-20 right-0 w-[400px] h-[400px] rounded-full blur-3xl opacity-20"
+        style={{ background: "#00E5FF" }}
+      />
+
+      <div className="relative z-10">
+        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-white via-slate-200 to-[#00E5FF] bg-clip-text text-transparent">
+          Космическая Производительность. Бескомпромиссные Игровые Сборки.
+        </h1>
+        <p className="mt-6 text-lg text-textMuted max-w-xl">
+          Сборка премиальных ПК под заказ, продажа топовых комплектующих и
+          моментальный выкуп вашего старого железа. Наш бот всегда покажет
+          актуальное наличие.
+        </p>
+        <div className="mt-10 flex flex-wrap gap-4">
+          <button
+            onClick={scrollToCatalog}
+            className="px-8 py-3.5 rounded-2xl font-semibold text-[#0B0E14] bg-[#00E5FF] shadow-[0_0_25px_rgba(0,229,255,0.6)] hover:shadow-[0_0_40px_rgba(0,229,255,0.9)] hover:scale-105 transition-all duration-300"
+          >
+            Открыть каталог
+          </button>
+          <a
+            href={TELEGRAM_BOT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3.5 rounded-2xl font-semibold text-white border border-[#3D5AFE] bg-[#161B26] hover:bg-[#3D5AFE]/20 hover:border-[#00E5FF] transition-all duration-300"
+          >
+            Запустить Бота
+          </a>
+        </div>
+      </div>
+
+      <div className="relative z-10 flex items-center justify-center">
+        <div className="relative w-full max-w-sm aspect-square rounded-2xl bg-[#161B26] border border-white/10 shadow-[0_0_60px_rgba(61,90,254,0.35)] p-8 flex items-center justify-center">
+          <div className="absolute inset-4 rounded-2xl border border-[#00E5FF]/20" />
+
+          <div className="relative w-40 h-40 rounded-full border-4 border-[#00E5FF]/40 flex items-center justify-center animate-pulse">
+            <div className="w-28 h-28 rounded-full border-4 border-[#3D5AFE]/50 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-[#00E5FF] shadow-[0_0_40px_rgba(0,229,255,0.9)]" />
+            </div>
+          </div>
+
+          <div className="absolute top-8 left-8 w-3 h-3 rounded-full bg-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,1)] animate-pulse" />
+          <div className="absolute bottom-10 right-10 w-2 h-2 rounded-full bg-[#3D5AFE] shadow-[0_0_15px_rgba(61,90,254,1)] animate-pulse" />
+          <div className="absolute bottom-16 left-12 w-2 h-2 rounded-full bg-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,1)] animate-pulse" />
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs tracking-[0.3em] text-textMuted">
+            ASTRAL CORE
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProductCard({ product }) {
+  return (
+    <div className="group bg-[#161B26] rounded-2xl border border-white/10 hover:border-[#00E5FF]/50 transition-all duration-300 p-6 flex flex-col shadow-lg hover:shadow-[0_0_30px_rgba(0,229,255,0.2)]">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-bold tracking-wider uppercase px-3 py-1 rounded-full bg-[#3D5AFE]/20 text-[#00E5FF] border border-[#00E5FF]/30">
+          {product.badge}
+        </span>
+        <span className="text-textMuted text-sm">{product.price}</span>
+      </div>
+
+      <img
+        src={product.imageUrl}
+        alt={product.title}
+        className="w-full h-48 object-cover rounded-xl mb-4 border border-white/5"
+      />
+
+      <h3 className="text-white font-bold text-lg mb-4 leading-snug">
+        {product.title}
+      </h3>
+
+      <ul className="space-y-2 mb-6 flex-1">
+        {product.specs.map((spec) => (
+          <li
+            key={spec.label}
+            className="flex justify-between text-sm border-b border-white/5 pb-1.5"
+          >
+            <span className="text-textMuted">{spec.label}</span>
+            <span className="text-white font-medium text-right">{spec.value}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={product.ctaLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-auto text-center px-5 py-3 rounded-2xl font-bold uppercase tracking-wide text-sm text-[#0B0E14] bg-gradient-to-r from-[#00E5FF] to-[#3D5AFE] hover:shadow-[0_0_25px_rgba(0,229,255,0.7)] hover:scale-[1.02] transition-all duration-300"
+      >
+        Уточнить у менеджера
+      </a>
+    </div>
+  );
+}
+
+function Catalog({ catalogRef }) {
+  return (
+    <section ref={catalogRef} className="px-6 py-24 max-w-7xl mx-auto">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-white text-center mb-4">
+        Актуальные Предложения и Сборки
+      </h2>
+      <p className="text-textMuted text-center max-w-2xl mx-auto mb-14">
+        Каждая сборка проходит полную проверку и индивидуальную настройку перед
+        отправкой клиенту.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WhyChooseUs() {
+  return (
+    <section id="trade-in" className="px-6 py-24 bg-[#0B0E14]">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-white text-center mb-14">
+          Почему выбирают Astral
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {whyChooseUs.map((item) => (
+            <div
+              key={item.title}
+              className="bg-[#161B26] rounded-2xl border border-white/10 hover:border-[#00E5FF]/50 transition-all duration-300 p-8 text-center"
+            >
+              <div className="text-4xl mb-5">{item.icon}</div>
+              <h3 className="text-white font-bold text-lg mb-3">
+                {item.title}
+              </h3>
+              <p className="text-textMuted text-sm">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="px-6 py-12 border-t border-white/5 bg-[#0B0E14]">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-3">
+          <AstralLogo className="w-8 h-8" />
+          <span className="text-white font-bold tracking-widest">
+            ASTRAL COMPUTERS
+          </span>
+        </div>
+
+        <p className="text-textMuted text-sm text-center">
+          Сборка ПК | Продажа и выкуп комплектующих
+        </p>
+
+        <div className="flex items-center gap-6 text-sm">
+          <a
+            href={TELEGRAM_CHANNEL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-textMuted hover:text-[#00E5FF] transition-colors duration-300"
+          >
+            Менеджер
+          </a>
+          <a
+            href={TELEGRAM_BOT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-textMuted hover:text-[#00E5FF] transition-colors duration-300"
+          >
+            Бот
+          </a>
+        </div>
+      </div>
+
+      <p className="text-center text-textMuted text-xs mt-8">
+        © 2026 Astral Computers
+      </p>
+    </footer>
+  );
+}
+
+function AstralLanding() {
+  const catalogRef = useRef(null);
+
+  return (
+    <div className="min-h-screen bg-[#0B0E14] text-white font-sans selection:bg-[#00E5FF]/30">
+      <Header catalogRef={catalogRef} />
+      <Hero catalogRef={catalogRef} />
+      <Catalog catalogRef={catalogRef} />
+      <WhyChooseUs />
+      <Footer />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<AstralLanding />);
+</script>
+</body>
+</html>
